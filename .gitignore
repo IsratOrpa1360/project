@@ -1,0 +1,28 @@
+# Environment variables (never commit real secrets)
+.env
+.env.local
+
+# SQLite database files and instance directory
+instance/
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Python virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

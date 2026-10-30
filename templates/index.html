@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Expense Tracker</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/logo.svg') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Top Header & Navigation -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <div class="brand-logo" aria-hidden="true">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="5" width="20" height="14" rx="3"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                        <circle cx="17" cy="14.5" r="1.5"></circle>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="brand-title">ExpenseTracker</h1>
+                    <p class="brand-subtitle">Personal Financial Dashboard</p>
+                </div>
+            </div>
+
+            <nav class="main-nav" aria-label="Main Navigation">
+                <button type="button" class="nav-tab active" data-target="dashboard" id="tab-dashboard">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+                    <span>Dashboard</span>
+                </button>
+                <button type="button" class="nav-tab" data-target="add-transaction" id="tab-add-transaction">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                    <span>Add Transaction</span>
+                </button>
+                <button type="button" class="nav-tab" data-target="history" id="tab-history">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                    <span>Transactions</span>
+                </button>
+                <button type="button" class="nav-tab" data-target="reports" id="tab-reports">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    <span>Monthly Reports</span>
+                </button>
+                <button type="button" class="nav-tab" data-target="settings" id="tab-settings">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <span>Settings</span>
+                </button>
+            </nav>
+
+            <div class="header-actions">
+                <span class="currency-pill" id="header-currency-badge" title="Active Display Currency">BDT (৳)</span>
+                <button type="button" class="btn btn-primary btn-sm" id="quick-add-btn">
+                    + New Entry
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Notification Toast Banner -->
+    <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Main Content Container -->
+    <main class="main-container">
+
+        <!-- ================================================================
+             SECTION A: DASHBOARD
+             ================================================================ -->
+        <section id="view-dashboard" class="view-section active" aria-labelledby="dashboard-heading">
+            <div class="section-header">
+                <div>
+                    <h2 id="dashboard-heading" class="section-title">Financial Overview</h2>
+                    <p class="section-subtitle">Real-time metrics calculated from your saved SQLite records</p>
+                </div>
+                <div class="section-actions">
+                    <button type="button" class="btn btn-outline btn-sm" id="refresh-dashboard-btn">
+                        Refresh Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- 4 KPI Summary Cards -->
+            <div class="kpi-grid">
+                <article class="card kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-label">Total Balance</span>
+                        <span class="kpi-icon kpi-icon-primary" aria-hidden="true">৳</span>
+                    </div>
+                    <p class="kpi-value" id="stat-total-balance">৳0.00</p>
+                    <span class="kpi-meta" id="stat-balance-status">Net available balance</span>
+                </article>
+
+                <article class="card kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-label">Total Income</span>
+                        <span class="kpi-icon kpi-icon-income" aria-hidden="true">↑</span>
+                    </div>
+                    <p class="kpi-value text-income" id="stat-total-income">৳0.00</p>
+                    <span class="kpi-meta">Cumulative earnings</span>
+                </article>
+
+                <article class="card kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-label">Total Expenses</span>
+                        <span class="kpi-icon kpi-icon-expense" aria-hidden="true">↓</span>
+                    </div>
+                    <p class="kpi-value text-expense" id="stat-total-expense">৳0.00</p>
+                    <span class="kpi-meta">Cumulative spending</span>
+                </article>
+
+                <article class="card kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-label">Transactions</span>
+                        <span class="kpi-icon kpi-icon-neutral" aria-hidden="true">#</span>
+                    </div>
+                    <p class="kpi-value" id="stat-transaction-count">0</p>
+                    <span class="kpi-meta">Total saved records</span>
+                </article>
+            </div>
+
+            <!-- Middle Row: Income vs Expense Overview & Monthly Expense Summary -->
+            <div class="dashboard-grid-2">
+                <!-- Income vs Expense Overview -->
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Income vs. Expense Overview</h3>
+                            <p class="card-subtitle">All-time cashflow comparison and savings ratio</p>
+                        </div>
+                        <span class="badge badge-neutral" id="dash-savings-badge">0% Saved</span>
+                    </div>
+                    <div id="dash-income-expense-body" class="card-body">
+                        <div class="comparison-bars">
+                            <div class="comp-row">
+                                <div class="comp-label-row">
+                                    <span class="comp-name">Total Income</span>
+                                    <span class="comp-amount text-income" id="comp-income-val">৳0.00</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill fill-income" id="comp-income-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="comp-row">
+                                <div class="comp-label-row">
+                                    <span class="comp-name">Total Expenses</span>
+                                    <span class="comp-amount text-expense" id="comp-expense-val">৳0.00</span>
+                                </div>
+                                <div class="progress-track">
+                                    <div class="progress-fill fill-expense" id="comp-expense-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="summary-Highlight-box">
+                            <div class="highlight-item">
+                                <span class="highlight-label">Net Savings</span>
+                                <strong class="highlight-val" id="comp-net-savings">৳0.00</strong>
+                            </div>
+                            <div class="highlight-item">
+                                <span class="highlight-label">Expense-to-Income Ratio</span>
+                                <strong class="highlight-val" id="comp-expense-ratio">0.0%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Monthly Expense Summary -->
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Monthly Expense Summary</h3>
+                            <p class="card-subtitle" id="dash-monthly-subtitle">Active month snapshot</p>
+                        </div>
+                        <button type="button" class="btn btn-ghost btn-sm" id="dash-view-reports-btn">
+                            Full Report →
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="mini-stats-grid">
+                            <div class="mini-stat">
+                                <span class="mini-label">Month Income</span>
+                                <strong class="mini-value text-income" id="dash-month-income">৳0.00</strong>
+                            </div>
+                            <div class="mini-stat">
+                                <span class="mini-label">Month Expenses</span>
+                                <strong class="mini-value text-expense" id="dash-month-expense">৳0.00</strong>
+                            </div>
+                            <div class="mini-stat">
+                                <span class="mini-label">Month Net Savings</span>
+                                <strong class="mini-value" id="dash-month-savings">৳0.00</strong>
+                            </div>
+                            <div class="mini-stat">
+                                <span class="mini-label">Largest Expense</span>
+                                <strong class="mini-value" id="dash-month-largest">৳0.00</strong>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Bottom Row: Expense Category Breakdown & Recent Transactions -->
+            <div class="dashboard-grid-2">
+                <!-- Expense Category Breakdown -->
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Expense Category Breakdown</h3>
+                            <p class="card-subtitle">Where your money goes by category</p>
+                        </div>
+                    </div>
+                    <div class="card-body" id="dash-category-list">
+                        <div class="empty-state">
+                            <p class="empty-title">No expenses recorded yet</p>
+                            <p class="empty-desc">Add an expense transaction to see your category breakdown.</p>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Recent Transactions -->
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Recent Transactions</h3>
+                            <p class="card-subtitle">Latest 5 recorded entries</p>
+                        </div>
+                        <button type="button" class="btn btn-ghost btn-sm" id="dash-view-all-tx-btn">
+                            View All →
+                        </button>
+                    </div>
+                    <div class="card-body" id="dash-recent-list">
+                        <div class="empty-state">
+                            <p class="empty-title">No transactions yet</p>
+                            <p class="empty-desc">Click "+ New Entry" to record your first income or expense.</p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SECTION B: ADD TRANSACTION
+             ================================================================ -->
+        <section id="view-add-transaction" class="view-section" aria-labelledby="add-tx-heading">
+            <div class="form-page-wrapper">
+                <article class="card form-card">
+                    <div class="card-header">
+                        <div>
+                            <h2 id="add-tx-heading" class="card-title">Add New Transaction</h2>
+                            <p class="card-subtitle">Record an income or expense entry to your SQLite database</p>
+                        </div>
+                    </div>
+
+                    <form id="add-transaction-form" class="tx-form" novalidate>
+                        <div id="add-form-feedback" class="form-feedback" role="alert" hidden></div>
+
+                        <!-- Transaction Type Toggle -->
+                        <div class="form-group">
+                            <label class="form-label" id="type-group-label">Transaction Type <span class="required">*</span></label>
+                            <div class="type-selector" role="radiogroup" aria-labelledby="type-group-label">
+                                <label class="type-option">
+                                    <input type="radio" name="type" id="add-type-expense" value="Expense" checked>
+                                    <span class="type-box type-box-expense">Expense</span>
+                                </label>
+                                <label class="type-option">
+                                    <input type="radio" name="type" id="add-type-income" value="Income">
+                                    <span class="type-box type-box-income">Income</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-row-2">
+                            <!-- Amount -->
+                            <div class="form-group">
+                                <label for="add-amount" class="form-label">
+                                    Amount (<span id="add-currency-label">BDT</span>) <span class="required">*</span>
+                                </label>
+                                <input
+                                    type="number"
+                                    id="add-amount"
+                                    name="amount"
+                                    class="form-control"
+                                    placeholder="0.00"
+                                    step="0.01"
+                                    min="0.01"
+                                    required
+                                >
+                                <small class="field-hint">Must be greater than 0</small>
+                            </div>
+
+                            <!-- Date -->
+                            <div class="form-group">
+                                <label for="add-date" class="form-label">Date <span class="required">*</span></label>
+                                <input
+                                    type="date"
+                                    id="add-date"
+                                    name="date"
+                                    class="form-control"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="form-group">
+                            <label for="add-category" class="form-label">Category <span class="required">*</span></label>
+                            <select id="add-category" name="category" class="form-control" required>
+                                <!-- Populated dynamically based on Income / Expense selection -->
+                            </select>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            <label for="add-description" class="form-label">Description <span class="required">*</span></label>
+                            <input
+                                type="text"
+                                id="add-description"
+                                name="description"
+                                class="form-control"
+                                placeholder="e.g., Weekly grocery shopping at Agora"
+                                maxlength="150"
+                                required
+                            >
+                            <small class="field-hint">Brief note describing the transaction (max 150 characters)</small>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="reset" class="btn btn-outline" id="add-reset-btn">Reset Form</button>
+                            <button type="submit" class="btn btn-primary" id="add-submit-btn">Save Transaction</button>
+                        </div>
+                    </form>
+                </article>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SECTION C: TRANSACTION HISTORY
+             ================================================================ -->
+        <section id="view-history" class="view-section" aria-labelledby="history-heading">
+            <div class="section-header">
+                <div>
+                    <h2 id="history-heading" class="section-title">Transaction History</h2>
+                    <p class="section-subtitle">Search, filter, edit, or delete saved transactions</p>
+                </div>
+                <div class="section-actions">
+                    <span class="badge badge-neutral" id="history-count-badge">0 records</span>
+                </div>
+            </div>
+
+            <!-- Filter & Search Bar -->
+            <article class="card filter-card">
+                <form id="filter-form" class="filter-grid" aria-label="Filter Transactions">
+                    <div class="form-group">
+                        <label for="filter-search" class="form-label">Search Description</label>
+                        <input
+                            type="search"
+                            id="filter-search"
+                            class="form-control"
+                            placeholder="Search keywords..."
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="filter-type" class="form-label">Type</label>
+                        <select id="filter-type" class="form-control">
+                            <option value="">All Types</option>
+                            <option value="Income">Income Only</option>
+                            <option value="Expense">Expense Only</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="filter-category" class="form-label">Category</label>
+                        <select id="filter-category" class="form-control">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="filter-start-date" class="form-label">From Date</label>
+                        <input type="date" id="filter-start-date" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="filter-end-date" class="form-label">To Date</label>
+                        <input type="date" id="filter-end-date" class="form-control">
+                    </div>
+
+                    <div class="form-group filter-buttons">
+                        <button type="submit" class="btn btn-primary" id="apply-filters-btn">Apply</button>
+                        <button type="button" class="btn btn-outline" id="reset-filters-btn">Clear</button>
+                    </div>
+                </form>
+            </article>
+
+            <!-- Transactions Table -->
+            <article class="card table-card">
+                <div class="table-responsive">
+                    <table class="tx-table" aria-label="Saved Transactions">
+                        <thead>
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Type</th>
+                                <th scope="col" class="text-right">Amount</th>
+                                <th scope="col" class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body">
+                            <tr>
+                                <td colspan="6" class="empty-table-cell">No transactions match your current filters.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <!-- ================================================================
+             SECTION D: MONTHLY REPORTS
+             ================================================================ -->
+        <section id="view-reports" class="view-section" aria-labelledby="reports-heading">
+            <div class="section-header">
+                <div>
+                    <h2 id="reports-heading" class="section-title">Monthly Financial Reports</h2>
+                    <p class="section-subtitle">Analyze monthly income, expenses, net savings, and category distributions</p>
+                </div>
+                <div class="report-picker-group">
+                    <label for="report-month-input" class="form-label-inline">Select Month:</label>
+                    <input type="month" id="report-month-input" class="form-control form-control-sm">
+                </div>
+            </div>
+
+            <!-- 3 Summary KPI Cards for Selected Month -->
+            <div class="kpi-grid kpi-grid-3">
+                <article class="card kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-label">Monthly Income</span>
+                        <span class="kpi-icon kpi-icon-income" aria-hidden="true">↑</span>
+                    </div>
+                    <p class="kpi-value text-income" id="report-monthly-income">৳0.00</p>
+                    <span class="kpi-meta" id="report-month-label-inc">Selected period earnings</span>
+                </article>
+
+                <article class="card kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-label">Monthly Expenses</span>
+                        <span class="kpi-icon kpi-icon-expense" aria-hidden="true">↓</span>
+                    </div>
+                    <p class="kpi-value text-expense" id="report-monthly-expense">৳0.00</p>
+                    <span class="kpi-meta" id="report-month-label-exp">Selected period spending</span>
+                </article>
+
+                <article class="card kpi-card">
+                    <div class="kpi-top">
+                        <span class="kpi-label">Monthly Savings</span>
+                        <span class="kpi-icon kpi-icon-primary" aria-hidden="true">৳</span>
+                    </div>
+                    <p class="kpi-value" id="report-monthly-savings">৳0.00</p>
+                    <span class="kpi-meta" id="report-savings-rate">0.0% savings rate</span>
+                </article>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="dashboard-grid-2">
+                <!-- Chart 1: Income vs Expenses Visual Bar Chart -->
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Income vs. Expenses Chart</h3>
+                            <p class="card-subtitle">Visual comparison for the selected month</p>
+                        </div>
+                    </div>
+                    <div class="card-body" id="report-bar-chart-container">
+                        <!-- Rendered dynamically via Vanilla JS SVG/HTML bars or friendly empty state -->
+                    </div>
+                </article>
+
+                <!-- Chart 2: Category-Wise Expense Breakdown -->
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Category-Wise Expense Breakdown</h3>
+                            <p class="card-subtitle">Share of monthly spending per category</p>
+                        </div>
+                    </div>
+                    <div class="card-body" id="report-category-chart-container">
+                        <!-- Rendered dynamically via Vanilla JS SVG donut + legend or friendly empty state -->
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- ================================================================
+             SECTION E: SETTINGS
+             ================================================================ -->
+        <section id="view-settings" class="view-section" aria-labelledby="settings-heading">
+            <div class="section-header">
+                <div>
+                    <h2 id="settings-heading" class="section-title">Application Settings</h2>
+                    <p class="section-subtitle">Manage display preferences, database storage, and application metadata</p>
+                </div>
+            </div>
+
+            <div class="dashboard-grid-2">
+                <!-- Currency Preference -->
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Display Currency</h3>
+                            <p class="card-subtitle">Changing currency updates symbols across the UI without altering stored numbers</p>
+                        </div>
+                    </div>
+                    <form id="settings-currency-form" class="card-body">
+                        <div class="form-group">
+                            <label for="settings-currency-select" class="form-label">Preferred Currency Symbol</label>
+                            <select id="settings-currency-select" class="form-control">
+                                <option value="BDT">Bangladeshi Taka (BDT - ৳)</option>
+                                <option value="USD">US Dollar (USD - $)</option>
+                                <option value="EUR">Euro (EUR - €)</option>
+                                <option value="GBP">British Pound (GBP - £)</option>
+                                <option value="INR">Indian Rupee (INR - ₹)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="save-currency-btn">Save Currency Preference</button>
+                    </form>
+                </article>
+
+                <!-- Application Information -->
+                <article class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 class="card-title">Application Information</h3>
+                            <p class="card-subtitle">System architecture and database status</p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <dl class="info-list">
+                            <div class="info-item">
+                                <dt>Application Name</dt>
+                                <dd id="info-app-name">Personal Expense Tracker</dd>
+                            </div>
+                            <div class="info-item">
+                                <dt>Version</dt>
+                                <dd id="info-app-version">1.0.0</dd>
+                            </div>
+                            <div class="info-item">
+                                <dt>Technology Stack</dt>
+                                <dd id="info-app-stack">HTML5, CSS3, Vanilla JS, Python, Flask, SQLite</dd>
+                            </div>
+                            <div class="info-item">
+                                <dt>Database Engine</dt>
+                                <dd id="info-db-engine">SQLite3</dd>
+                            </div>
+                            <div class="info-item">
+                                <dt>Stored Records</dt>
+                                <dd id="info-stored-count">0 transactions</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Danger Zone: Clear All Transactions -->
+            <article class="card danger-card">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title text-expense">Danger Zone: Reset Database</h3>
+                        <p class="card-subtitle">Permanently delete all saved transactions from the SQLite database</p>
+                    </div>
+                    <button type="button" class="btn btn-danger" id="open-clear-modal-btn">
+                        Clear All Transactions
+                    </button>
+                </div>
+            </article>
+        </section>
+
+    </main>
+
+    <!-- ================================================================
+         MODAL 1: EDIT TRANSACTION MODAL
+         ================================================================ -->
+    <div id="edit-modal-backdrop" class="modal-backdrop" hidden>
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+            <div class="modal-header">
+                <h3 id="edit-modal-title" class="modal-title">Edit Transaction</h3>
+                <button type="button" class="modal-close" id="close-edit-modal-btn" aria-label="Close modal">×</button>
+            </div>
+            <form id="edit-transaction-form" class="modal-body" novalidate>
+                <input type="hidden" id="edit-id">
+                <div id="edit-form-feedback" class="form-feedback" role="alert" hidden></div>
+
+                <div class="form-group">
+                    <label class="form-label" id="edit-type-label">Transaction Type <span class="required">*</span></label>
+                    <div class="type-selector" role="radiogroup" aria-labelledby="edit-type-label">
+                        <label class="type-option">
+                            <input type="radio" name="edit-type" id="edit-type-expense" value="Expense">
+                            <span class="type-box type-box-expense">Expense</span>
+                        </label>
+                        <label class="type-option">
+                            <input type="radio" name="edit-type" id="edit-type-income" value="Income">
+                            <span class="type-box type-box-income">Income</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="edit-amount" class="form-label">Amount <span class="required">*</span></label>
+                        <input type="number" id="edit-amount" class="form-control" step="0.01" min="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-date" class="form-label">Date <span class="required">*</span></label>
+                        <input type="date" id="edit-date" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-category" class="form-label">Category <span class="required">*</span></label>
+                    <select id="edit-category" class="form-control" required></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-description" class="form-label">Description <span class="required">*</span></label>
+                    <input type="text" id="edit-description" class="form-control" maxlength="150" required>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="cancel-edit-btn">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="save-edit-btn">Update Transaction</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         MODAL 2: DELETE SINGLE TRANSACTION CONFIRMATION
+         ================================================================ -->
+    <div id="delete-modal-backdrop" class="modal-backdrop" hidden>
+        <div class="modal-dialog modal-sm" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+            <div class="modal-header">
+                <h3 id="delete-modal-title" class="modal-title">Confirm Deletion</h3>
+                <button type="button" class="modal-close" id="close-delete-modal-btn" aria-label="Close modal">×</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-text">Are you sure you want to delete this transaction?</p>
+                <div class="confirm-summary" id="delete-tx-summary"></div>
+                <p class="modal-warning">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="cancel-delete-btn">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn">Delete Transaction</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================
+         MODAL 3: CLEAR ALL TRANSACTIONS CONFIRMATION
+         ================================================================ -->
+    <div id="clear-modal-backdrop" class="modal-backdrop" hidden>
+        <div class="modal-dialog modal-sm" role="dialog" aria-modal="true" aria-labelledby="clear-modal-title">
+            <div class="modal-header">
+                <h3 id="clear-modal-title" class="modal-title text-expense">Clear All Transactions</h3>
+                <button type="button" class="modal-close" id="close-clear-modal-btn" aria-label="Close modal">×</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-text">
+                    This will permanently delete <strong>all saved transactions</strong> from your database.
+                </p>
+                <div class="form-group" style="margin-top: 12px;">
+                    <label for="clear-confirm-checkbox" class="checkbox-label">
+                        <input type="checkbox" id="clear-confirm-checkbox">
+                        <span>I understand that all transaction records will be permanently erased.</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="cancel-clear-btn">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm-clear-btn" disabled>Yes, Clear Everything</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
